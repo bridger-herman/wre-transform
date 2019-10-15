@@ -9,6 +9,8 @@
 use std::f64;
 use std::ops::{Add, Mul, Neg, Sub};
 
+use num_traits::Zero;
+
 pub const MAX_VECTOR3: Vec3 = Vec3 {
     x: f64::MAX,
     y: f64::MAX,
@@ -16,11 +18,25 @@ pub const MAX_VECTOR3: Vec3 = Vec3 {
 };
 
 /// 3 dimensional vector
-#[derive(Default, Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
     pub z: f64,
+}
+
+impl Zero for Vec3 {
+    fn zero() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    fn is_zero(&self) -> bool {
+        self.x == 0.0 && self.y == 0.0 && self.z == 0.0
+    }
 }
 
 impl<'a> From<&'a [f64]> for Vec3 {
