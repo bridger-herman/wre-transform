@@ -6,23 +6,23 @@
 
 //! A 3 dimensional vector (mimicking GLM's vec3)
 
-use std::f64;
+use std::f32;
 use std::ops::{Add, Mul, Neg, Sub};
 
 use num_traits::Zero;
 
 pub const MAX_VECTOR3: Vec3 = Vec3 {
-    x: f64::MAX,
-    y: f64::MAX,
-    z: f64::MAX,
+    x: f32::MAX,
+    y: f32::MAX,
+    z: f32::MAX,
 };
 
 /// 3 dimensional vector
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub struct Vec3 {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl Zero for Vec3 {
@@ -39,8 +39,8 @@ impl Zero for Vec3 {
     }
 }
 
-impl<'a> From<&'a [f64]> for Vec3 {
-    fn from(slice: &'a [f64]) -> Self {
+impl<'a> From<&'a [f32]> for Vec3 {
+    fn from(slice: &'a [f32]) -> Self {
         assert_eq!(slice.len(), 3);
         Self {
             x: slice[0],
@@ -50,10 +50,10 @@ impl<'a> From<&'a [f64]> for Vec3 {
     }
 }
 
-impl Mul<f64> for Vec3 {
+impl Mul<f32> for Vec3 {
     type Output = Vec3;
 
-    fn mul(self, scalar: f64) -> Self {
+    fn mul(self, scalar: f32) -> Self {
         Self {
             x: self.x * scalar,
             y: self.y * scalar,
@@ -99,7 +99,7 @@ impl Neg for Vec3 {
 }
 
 impl Vec3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }
 
@@ -111,11 +111,11 @@ impl Vec3 {
         }
     }
 
-    pub fn dot(&self, other: &Vec3) -> f64 {
+    pub fn dot(&self, other: &Vec3) -> f32 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    pub fn length(&self) -> f64 {
+    pub fn length(&self) -> f32 {
         self.dot(self).sqrt()
     }
 
@@ -133,7 +133,7 @@ impl Vec3 {
     }
 
     // Uses the same math from the GLM library - doesn't match GLM-rs
-    pub fn refract(self, normal: Self, eta: f64) -> Self {
+    pub fn refract(self, normal: Self, eta: f32) -> Self {
         // Figure out if we're going into or coming out of the material
         let dot_ni = self.dot(&normal);
         let eta = if dot_ni > 0.0 { eta } else { 1.0 / eta };
@@ -143,11 +143,11 @@ impl Vec3 {
             self * eta
         } else {
             self * eta - normal * (eta * dot_ni + k.sqrt())
-        }.normalized()
+        }
+        .normalized()
     }
 
-    pub fn angle(&self, other: &Self) -> f64 {
+    pub fn angle(&self, other: &Self) -> f32 {
         self.normalized().dot(&other.normalized()).acos()
     }
 }
-
